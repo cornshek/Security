@@ -1,0 +1,26 @@
+#设置端口号
+server:
+  port: 11111
+
+#给项目取名字：服务器名（不能使用‘_’线）     context-path: 才是访问路径
+spring:
+  application:
+    name: panda-eureka
+
+#配置主机名
+eureka:
+  instance:
+    hostname: 127.0.0.1
+    instance-id: pandaEurek:${spring.cloud.client.ipaddress}:${server.port}
+    prefer-ip-address: true
+  client:
+    #是否将自己作为客户端注册到注册中心（默认是true），自己就是注册中心，没必要将自己注册到自己
+    #这里不需要，查看@EnableEurekaServer源码，它间接使用到了@EnableDiscoveryClient
+    register-with-eureka: false
+    #默认为true
+    #只需要同步到别的服务器，不需要别的服务器同步到注册中心
+    fetch-registry: false
+    # 实际测试：若修改尾部的eureka为其它的(只能写它)，比如/myeureka，注册中心启动没问题，但服务端在注册时会失败
+    # 报告异常：com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
