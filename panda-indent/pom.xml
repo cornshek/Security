@@ -6,6 +6,7 @@
         <groupId>com.pd</groupId>
         <artifactId>panda-version</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../panda-version/pom.xml</relativePath>
     </parent>
     <artifactId>panda-indent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
