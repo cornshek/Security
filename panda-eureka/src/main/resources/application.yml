@@ -24,3 +24,6 @@ eureka:
     # 报告异常：com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    eviction-interval-timer-in-ms: 3000
+    enable-self-preservation: false
