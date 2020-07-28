@@ -1,0 +1,25 @@
+server:
+  port: 8866
+
+spring:
+  application:
+    name: panda-configserver
+  profiles:
+    active: native  #设置使用本地配置(默认是git,可以设置：subversion(SVN)，native(本地))
+  cloud:
+    config:
+      server:
+        #如下是本地文件配置
+        native:
+          search-locations: classpath:/config/ #配置文件存放的目录
+
+#eureka相关配置
+eureka:
+  instance:
+    hostname: 127.0.0.1
+    prefer-ip-address: true
+    #设置是否将自己作为客户端注册到注册中心(缺省true)
+    #这里为不需要,查看@EnableEurekaServer注解的源码,会发现它间接用到了@EnableDiscoveryClient
+  client:
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:11111/eureka/

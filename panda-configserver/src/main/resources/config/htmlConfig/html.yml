@@ -1,0 +1,15 @@
+#给项目取名字
+spring:
+  mvc:
+    async:
+      request-timeout: 20000
+  #配置redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 30000
+
+ribbon:
+  eureka:
+    enable: true

@@ -4,7 +4,6 @@ import com.pd.pojo.Account;
 import com.pd.pojo.User;
 import com.pd.result.MessageResult;
 import com.pd.service.IUserService;
-import com.pd.util.Sessions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

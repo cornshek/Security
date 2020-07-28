@@ -1,6 +1,8 @@
 package com.pd.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.pd.mapper.IAccountMapper;
 import com.pd.mapper.IUserMapper;
 import com.pd.pojo.Account;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -66,10 +69,6 @@ public class UserServiceImpl implements IUserService {
     public MessageResult<?> getNote(String phone) throws Exception {
         MessageResult<?> message = new MessageResult<>();
         //创建短信类
-        /*SendNote sendNote = new SendNote();
-        SendNote.NoteData ali = sendNote.ali(phone);
-        System.out.println("短信验证码："+ali.getNote());*/
-        //使用互亿短信
         SendNote sendNote = new SendNote();
         SendNote.NoteData yihu = sendNote.yihu(phone);
         Element root = (Element) yihu.getResultData();
@@ -148,5 +147,30 @@ public class UserServiceImpl implements IUserService {
             messageResult.setData(object);
         }
         return messageResult;
+    }
+
+    @Override
+    public PageInfo<User> checkUserList(Integer page, Integer pageSize) throws Exception {
+        PageHelper.startPage(page, pageSize, true);
+        List<User> checkUserList = userMapper.checkUserList();
+        PageInfo<User> pageInfo1 = new PageInfo<>(checkUserList);
+        return pageInfo1;
+    }
+
+    @Override
+    public User checkUser(Integer id) throws Exception {
+        User user =userMapper.selectByIdUser(id);
+        return user;
+    }
+
+    @Override
+    public int modifyStatus(Account account) throws Exception{
+        int updateById = accountMapper.updateById(account);
+        return updateById;
+    }
+
+    @Override
+    public User verify(User User) throws Exception {
+        return null;
     }
 }
