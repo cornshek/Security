@@ -1,0 +1,66 @@
+#------------------通用配置------------------
+#数据库连接源 【配置源jar必须导入】  前提是使用自定义的DataSource
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    username: scott
+    password: orcl
+    url: jdbc:oracle:thin:@localhost:1521:orcl
+    druid:
+      initSize: 5
+      maxSize: 100
+      minSize: 10
+  #type: com.alibaba.druid.pool.DruidDataSource
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+    #json对属性值为null 忽略  10.1.11.252
+    default-property-inclusion: NON_NULL
+  #配置连接超时时间
+  mvc:
+    async:
+      request-timeout: 100000ms
+  #配置redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 100000ms
+    database: 0
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+  thymeleaf:
+    cache: false
+
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  type-aliases-package: com.pd.pojo
+
+
+#启动pagehelper插件配置的数据库
+pagehelper:
+  helper-dialect: oracle
+  reasonable: true
+  support-methods-arguments: true
+  params: countSql
+
+
+ribbon:
+  eureka:
+    enabled: true
+  #超时的时间设置, 默认1秒
+  #设置为5分钟: 5*60*1000  毫秒
+  ReadTimeout: 300000
+  SocketTimeout: 300000
+  ConnectTimeout: 30000
+
+
+#允许Feign客户端使用Hystrix
+feign:
+  hystrix:
+    enabled: true

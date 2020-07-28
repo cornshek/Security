@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: panda-user
+  cloud:
+    config:
+      name: user # 指定配置文件的名字
+      #uri: http://localhost:8866
+      discovery:
+        enabled: true
+        service-id: panda-configserver  # 注册中心的服务名
+      profile: dev  # 指定配置文件的环境
+      label: usersConfig   # 指定配置文件的目录
+
+#eureka相关配置
+eureka:
+  instance:
+    hostname: 127.0.0.1
+    #修改eureka-client在注册中心页面显示的名字
+    #${spring.cloud.client.ipaddress} 获取服务的ip地址
+    instance-id: pandaUser-${spring.cloud.client.ipaddress}:${server.port}
+    #服务信息显示的真实的ip, 开发中一定要设置为true, 如果不设置, 其他电脑访问不到你的服务
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:11111/eureka/

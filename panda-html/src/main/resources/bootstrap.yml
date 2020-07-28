@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: panda-html
+  cloud:
+    config:
+      name: html # 指定配置文件的名字
+      #uri: http://localhost:8866
+      discovery:
+        enabled: true
+        service-id: panda-configserver  # 注册中心的服务名
+      profile: dev  # 指定配置文件的环境
+      label: htmlConfig   # 指定配置文件的目录
+
+#配置主机名
+eureka:
+  instance:
+    hostname: 127.0.0.1
+    instance-id: pandaHtml:${spring.cloud.client.ipaddress}:${server.port}
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:11111/eureka/
