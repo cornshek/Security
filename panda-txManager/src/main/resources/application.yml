@@ -30,7 +30,8 @@ eureka:
 
 tx-lcn:
   manager:
-    host: 127.0.0.1 # tx-manager ip(client请求ip)
+    # 必须写0.0.0.0才能连接，原因暂时未知
+    host: 0.0.0.0 # tx-manager ip(client请求ip)
     port: 8070  # client 请求端口
     heart-time: 12000 # 心跳检测时间 单位：ms
     dtx-time: 3000 # 事务执行总时间

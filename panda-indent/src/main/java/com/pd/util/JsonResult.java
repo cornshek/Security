@@ -1,11 +1,24 @@
 package com.pd.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
+@Component
 public class JsonResult<T> implements Serializable {
     public static final int success = 200;
     public static final int error = 400;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    public void test(String jsonString) throws IOException {
+        objectMapper.readTree(jsonString);
+    }
 
     /**
      * 操作是否成功

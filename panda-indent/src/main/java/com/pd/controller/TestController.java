@@ -27,13 +27,15 @@ public class TestController {
         JsonResult<TbCommissionOrder> result = new JsonResult<>();
         TbCommissionOrder tbCommissionOrder = tbCommissionOrderService.getById(id);
         if (tbCommissionOrder == null) {
-            result.setStateCode(400);
+            result.setStateCode(JsonResult.error);
             result.setMessage("操作失败");
         } else {
-            result.setStateCode(200);
+            result.setStateCode(JsonResult.success);
             result.setData(tbCommissionOrder);
             result.setMessage("操作成功");
         }
+
+        List<String[]> strings;
 
         return result;
     }
@@ -43,7 +45,7 @@ public class TestController {
     public JsonResult<?> testPost(TbCommissionOrder tbCommissionOrder) {
         JsonResult<?> result = new JsonResult<>();
         tbCommissionOrderService.save(tbCommissionOrder);
-        result.setStateCode(200);
+        result.setStateCode(JsonResult.success);
         result.setMessage("POST操作成功");
         return result;
     }

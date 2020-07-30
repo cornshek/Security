@@ -48,6 +48,13 @@
 			<version>5.0.2.RELEASE</version>
 		</dependency>
 
+		<!-- 添加Oracle-jdbc -->
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<version>18.3.0.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
