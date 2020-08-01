@@ -1,20 +1,20 @@
 #------------------通用配置------------------
-#数据库连接源 【配置源jar必须导入】  前提是使用自定义的DataSource
+#数据库连接源 【配置源jar必须导入】  前提是使用自定义的DataSource 10.1.8.252
 spring:
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver
     username: scott
-    password: orcl
-    url: jdbc:oracle:thin:@localhost:1521:orcl
+    password: tiger
+    url: jdbc:oracle:thin:@10.1.8.252:1521:orcl
     druid:
       initSize: 5
       maxSize: 100
       minSize: 10
-  #type: com.alibaba.druid.pool.DruidDataSource
+    type: com.alibaba.druid.pool.DruidDataSource
   jackson:
     time-zone: Asia/Shanghai
     date-format: yyyy-MM-dd HH:mm:ss
-    #json对属性值为null 忽略  10.1.11.252
+    #json对属性值为null 忽略
     default-property-inclusion: NON_NULL
   #配置连接超时时间
   mvc:

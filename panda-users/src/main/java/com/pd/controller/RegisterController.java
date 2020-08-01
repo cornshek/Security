@@ -22,4 +22,23 @@ public class RegisterController {
         MessageResult<?> messageResult = userService.insertUser(user, note);
         return messageResult;
     }
+
+    /**
+     * 校验身份证信息
+     * @return
+     */
+    @RequestMapping(value = "/regIdCard",method = RequestMethod.POST)
+    public String regIdCard(String idcard,String name,String bankcard,String mobile) throws Exception {
+        String result = userService.checkIdCard(idcard, name, bankcard, mobile);
+//        String result = idcard+"\n"+name+"\n"+bankcard+"\n"+mobile;
+        return result;
+    }
+
+    @RequestMapping(value = "/regHumanFace",method = RequestMethod.POST)
+    public String regHumanFace(String cardImagePath,String humanFaceImagePath) throws Exception {
+        System.out.println(cardImagePath+":"+humanFaceImagePath);
+        String result = userService.checkIdCardImage(cardImagePath,humanFaceImagePath);
+//        String result = idcard+"\n"+name+"\n"+bankcard+"\n"+mobile;
+        return result;
+    }
 }

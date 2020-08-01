@@ -38,4 +38,6 @@ public class Account implements Serializable {
     private String salesDepartment;
     /**资金账户审核状态*/
     private String capitalAccountState;
+    /**风险评估等级*/
+    private String eal;
 }

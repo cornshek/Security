@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
   application:
     name: panda-html
   cloud:
@@ -11,12 +13,22 @@ spring:
       profile: dev  # 指定配置文件的环境
       label: htmlConfig   # 指定配置文件的目录
 
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 0
+      location: H:\img
+      max-file-size: 1MB
+      max-request-size: 10MB
+      resolve-lazily: false
 #配置主机名
 eureka:
   instance:
     hostname: 127.0.0.1
-    instance-id: pandaHtml:${spring.cloud.client.ipaddress}:${server.port}
+    instance-id: pandaHtml-${spring.cloud.client.ipaddress}:${server.port}
     prefer-ip-address: true
   client:
     service-url:
       defaultZone: http://${eureka.instance.hostname}:11111/eureka/
+
+

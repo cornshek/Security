@@ -1,6 +1,6 @@
 spring:
   application:
-    name: panda-user
+    name: panda-users
   cloud:
     config:
       name: user # 指定配置文件的名字

@@ -12,7 +12,7 @@ import java.util.Date;
 
 /**
  * @author GTY
- * 用户详细信息表
+ * 用户基本信息
  */
 @Data
 @TableName("TB_USERS")
@@ -48,5 +48,6 @@ public class User implements Serializable {
     /**提交状态*/
     private String submitState;
     /**管理员ID*/
-    private String administratorId;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        /**开户表：Account.class*/
+    private Account account;
 }

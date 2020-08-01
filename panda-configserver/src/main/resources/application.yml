@@ -17,9 +17,11 @@ spring:
 eureka:
   instance:
     hostname: 127.0.0.1
+    #修改eureka-client在注册中心页面显示的名字
+    #${spring.cloud.client.ipaddress} 获取服务的ip地址
+    instance-id: pandaConfigServer-${spring.cloud.client.ipaddress}:${server.port}
+    #服务信息显示的真实的ip, 开发中一定要设置为true, 如果不设置, 其他电脑访问不到你的服务
     prefer-ip-address: true
-    #设置是否将自己作为客户端注册到注册中心(缺省true)
-    #这里为不需要,查看@EnableEurekaServer注解的源码,会发现它间接用到了@EnableDiscoveryClient
   client:
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:11111/eureka/
