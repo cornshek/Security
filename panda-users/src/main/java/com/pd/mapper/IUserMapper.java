@@ -22,10 +22,10 @@ public interface IUserMapper extends BaseMapper<User> {
 
     /**
      * 管理员查看单个用户具体信息
-     * @param id
+     * @param userId
      * @return
      * @throws Exception
      * @exception :异常
      */
-    User selectByIdUser(Integer id)throws Exception;
+    User selectByIdUser(Integer userId)throws Exception;
 }

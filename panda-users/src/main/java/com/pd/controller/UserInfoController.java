@@ -60,13 +60,13 @@ public class UserInfoController {
     /**
      * 管理员查看单个用户具体信息
      *
-     * @param id
+     * @param userId
      * @return User
      * @throws Exception
      */
     @RequestMapping(value = "/checkUser", method = RequestMethod.POST)
-    public User checkUsers(Integer id) throws Exception {
-        User user = userService.checkUser(id);
+    public User checkUsers(Integer userId) throws Exception {
+        User user = userService.checkUser(userId);
         return user;
     }
 

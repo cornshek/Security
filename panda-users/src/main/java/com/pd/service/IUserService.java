@@ -79,11 +79,11 @@ public interface IUserService {
     /**
      * 管理员查看单个用户具体信息
      *
-     * @param id
+     * @param userId
      * @return
      * @throws Exception
      */
-    User checkUser(Integer id) throws Exception;
+    User checkUser(Integer userId) throws Exception;
 
     /**
      * 管理员修改用户账号状态
@@ -94,5 +94,25 @@ public interface IUserService {
      * @throws Exception
      */
     int modifyStatus(Account account) throws Exception;
+
+
+    /**
+     * 验证身份证信息核实
+     * @param idcard
+     * @param name
+     * @param bankcard
+     * @param mobile
+     * @return
+     */
+    String checkIdCard(String idcard,String name,String bankcard,String mobile) throws Exception;
+
+    /**
+     * 身份证图片认证
+     * @param cardImagePath  身份证的国徽面图片路径
+     * @param humanFaceImagePath 身份证的人脸面图片路径
+     * @return
+     * @throws Exception
+     */
+    String checkIdCardImage(String cardImagePath,String humanFaceImagePath)throws Exception;
 
 }
