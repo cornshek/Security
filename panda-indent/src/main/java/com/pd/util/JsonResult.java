@@ -13,13 +13,6 @@ public class JsonResult<T> implements Serializable {
     public static final int success = 200;
     public static final int error = 400;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    public void test(String jsonString) throws IOException {
-        objectMapper.readTree(jsonString);
-    }
-
     /**
      * 操作是否成功
      * 200 成功
