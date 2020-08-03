@@ -49,19 +49,4 @@ public class Test1 {
         Sessions.setSessionData("note",vcode,5);
     }
 
-
-    @Test
-    public void demo(){
-        //"data":[{"file_name":"51信用卡","file_value":[{"index_value":4472,"index_name":"笔数"},{"index_value":9923,"index_name":"金额"}]},{"file_name":"量化派","file_value":[{"index_value":8303,"index_name":"笔数"},{"index_value":9659,"index_name":"金额"}]},{"file_name":"携程","file_value":[{"index_value":1504,"index_name":"笔数"},{"index_value":5067,"index_name":"金额"}]}]
-       String js =  "[\n" +
-               "　　[\"smith\",1001,\"clerck\",7788,2000.00,200.0]\n" +
-               "　　[\"smith\",1001,\"clerck\",7788,2000.00,200.0]\n" +
-               "　　[\"smith\",1001,\"clerck\",7788,2000.00,200.0]\n" +
-               "]";
-        JSONArray array = JSONArray.fromObject(js);
-        for (int i = 0; i < array.size(); i++) {
-            net.sf.json.JSONObject jsonObject = array.getJSONObject(i);
-            System.out.println(jsonObject.toString());
-        }
-    }
 }

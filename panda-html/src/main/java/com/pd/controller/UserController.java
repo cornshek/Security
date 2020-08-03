@@ -106,19 +106,23 @@ public class UserController {
         return map;
     }
 
+    private static Person per = new Person();
     /**
      * 用户开户之，详细信息
+     * produces = "application/json;charset=utf-8"
      */
-    @RequestMapping(value = "regPerson",produces = "application/json;charset=utf-8",method = RequestMethod.POST)
-    public Map<String,Object> regPerson(@RequestBody Person person){
+    @RequestMapping(value = "/regPerson",method = RequestMethod.POST)
+    public Person regPerson(Person person){
         System.out.println("\n"+person);
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("code", 0);
-        map.put("msg", "上传成功");
-        map.put("data", person);
-        map.put("count", 1);
-        return map;
+        per.setPhone(person.getPhone());
+        per.setBadCreditRecoed(person.getBadCreditRecoed());
+        System.out.println(per);
+        return person;
     }
+
+
+
+
 
 
 
