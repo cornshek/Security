@@ -47,7 +47,7 @@ public class TbTransaction implements Serializable {
      * 成交时间
      */
     @TableField("TRANSACTION_TIME")
-    private LocalDateTime transactionTime;
+    private String transactionTime;
 
     /**
      * 成交价格
@@ -118,11 +118,11 @@ public class TbTransaction implements Serializable {
         this.stockName = stockName;
     }
 
-    public LocalDateTime getTransactionTime() {
+    public String getTransactionTime() {
         return transactionTime;
     }
 
-    public void setTransactionTime(LocalDateTime transactionTime) {
+    public void setTransactionTime(String transactionTime) {
         this.transactionTime = transactionTime;
     }
 

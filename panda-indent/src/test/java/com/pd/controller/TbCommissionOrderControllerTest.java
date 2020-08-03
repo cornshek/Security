@@ -73,8 +73,7 @@ public class TbCommissionOrderControllerTest {
     public void testForPost() throws Exception {
         TbCommissionOrder tbCommissionOrder = new TbCommissionOrder();
         tbCommissionOrder.setBusiness("测试");
-        tbCommissionOrder.setCommissionOrderState("未成交");
-        tbCommissionOrder.setOrderPrice("20000元");
+        tbCommissionOrder.setOrderPrice("20");
         tbCommissionOrder.setStockCode("000000");
         tbCommissionOrder.setStockName("我是股票");
         tbCommissionOrder.setStocks("10");

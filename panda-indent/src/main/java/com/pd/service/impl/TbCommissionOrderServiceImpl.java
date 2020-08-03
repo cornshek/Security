@@ -67,6 +67,7 @@ public class TbCommissionOrderServiceImpl extends ServiceImpl<TbCommissionOrderM
 
         entity.setCommissionOrderNo(commissionOrderNo);
         entity.setOrderDate(OrderDate);
+        entity.setCommissionOrderState("未成交");
 
         mapper.insert(entity);
         return true;
