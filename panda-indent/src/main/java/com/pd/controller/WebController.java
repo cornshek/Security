@@ -8,6 +8,6 @@ public class WebController {
 
     @RequestMapping("/test")
     public String test() {
-        return "hello";
+        return "orderList";
     }
 }

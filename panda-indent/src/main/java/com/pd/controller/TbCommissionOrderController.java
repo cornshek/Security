@@ -1,6 +1,7 @@
 package com.pd.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pd.pojo.TbCommissionOrder;
@@ -9,8 +10,7 @@ import com.pd.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 public class TbCommissionOrderController {
@@ -43,6 +43,8 @@ public class TbCommissionOrderController {
      * 分页查询订单
      * GET
      *
+     * 不显示已撤回的委托订单 commissionOrderState = "0"
+     *
      * @param pageNum
      * @return
      */
@@ -51,6 +53,9 @@ public class TbCommissionOrderController {
         JsonResult<IPage<TbCommissionOrder>> result = new JsonResult<>();
         QueryWrapper<TbCommissionOrder> queryWrapper = new QueryWrapper<>();
         boolean orderTypeFlag = true;
+
+        //不显示已撤回的订单
+        queryWrapper.ne("COMMISSION_ORDER_STATE", "0");
 
         //根据前端传递的orderType orderField设置条件构造器
         //若前端没有传递orderType orderField 的值，则使用默认排序(default分支)
@@ -71,6 +76,8 @@ public class TbCommissionOrderController {
             case "stockCode":
                 queryWrapper.orderBy(true, orderTypeFlag, "STOCK_CODE");
                 break;
+            case "orderPrice":
+                queryWrapper.orderBy(true, orderTypeFlag, "ORDER_PRICE");
             default:
                 //默认根据 COMMISSION_ORDER_NO 升序
                 queryWrapper.orderBy(true, orderTypeFlag, "COMMISSION_ORDER_NO");
@@ -85,4 +92,29 @@ public class TbCommissionOrderController {
         return result;
     }
 
+    /**
+     * 将委托订单状态更新为 “已撤回”
+     * @return
+     */
+    @RequestMapping(value = "order", method = PUT, produces = "application/json")
+    public JsonResult<?> withdrawOrder(@RequestBody TbCommissionOrder tbCommissionOrder) {
+        System.out.println(tbCommissionOrder);
+        JsonResult<?> result = new JsonResult<>();
+
+        QueryWrapper<TbCommissionOrder> updateWrapper = new QueryWrapper<>();
+        updateWrapper.eq("COMMISSION_ORDER_NO", tbCommissionOrder.getCommissionOrderNo());
+
+        tbCommissionOrder.setCommissionOrderState("0");
+
+        if (tbCommissionOrderService.update(tbCommissionOrder, updateWrapper)) {
+            result.setStateCode(JsonResult.success);
+            result.setMessage("订单撤回操作成功");
+            return result;
+        }
+
+        result.setStateCode(JsonResult.error);
+        result.setMessage("订单撤回操作失败");
+
+        return result;
+    }
 }

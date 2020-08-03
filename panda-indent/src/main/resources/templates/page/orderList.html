@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>test</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <link rel="stylesheet" href="layui/css/layui.css">
     <script src="layui/layui.js"></script>
 </head>
@@ -14,10 +15,12 @@
         <li>切换卡3</li>
         <li>切换卡4</li>
         <li>切换卡5</li>
-    </ul >
+    </ul>
 
     <div class="layui-tab-content">
-        <div class="layui-tab-item layui-show"><table id="demo"  lay-filter="test"></table></div>
+        <div class="layui-tab-item layui-show">
+            <table id="orderList" lay-filter="orderList"></table>
+        </div>
         <div class="layui-tab-item">内容2</div>
         <div class="layui-tab-item">内容3</div>
         <div class="layui-tab-item">内容4</div>
@@ -41,7 +44,7 @@
 <script>
     //用layui.use的形式，启用需要的模块
     //function(){ 这是编辑代码的地方 }
-    layui.use(['table', 'layer', 'element'], function(){
+    layui.use(['table', 'layer', 'element'], function () {
         var table = layui.table;
 
         //执行渲染
@@ -49,7 +52,7 @@
             //设定容器唯一id
             id: 'orderList',
             //指定原始表格元素选择器（推荐id选择器）
-            elem: '#demo',
+            elem: '#orderList',
             //表头
             cols: [
                 [
@@ -60,7 +63,7 @@
                     {field: 'stockName', title: '股票名称'},
                     {field: 'business', title: '业务名称'},
                     {field: 'stocks', title: '股票数量'},
-                    {field: 'orderPrice', title: '下单价格'},
+                    {field: 'orderPrice', title: '下单价格', sort: true},
                     {title: '操作', toolbar: '#barDemo'}
                 ]
             ],
@@ -98,33 +101,50 @@
                 // dataName: 'data.records',
             },
             parseData(result) {
-                return{
+                return {
                     //解析接口状态
-                    "code" : result.stateCode,
+                    "code": result.stateCode,
                     //解析提示文本
-                    "msg" : result.message,
+                    "msg": result.message,
                     //解析数据长度
-                    "count" : result.data.total,
+                    "count": result.data.total,
                     //解数据列表析
-                    "data" : result.data.records
+                    "data": result.data.records
                 }
             }
         });
 
         //监听列工具条事件
-        table.on('tool(test)', function (obj) {
+        table.on('tool(orderList)', function (obj) {
             //当前行数据的数据
             var data = obj.data;
 
-            switch(obj.event){
+            switch (obj.event) {
                 case 'detail':
                     layer.open({
                         type: 2
                     })
                     break;
                 case 'del':
-                    layer.confirm('此委托订单将回撤，操作无法撤销', {title: '警告', icon: 2},function (index) {
-                        obj.del();
+                    var myData = {"commissionOrderNo": data.commissionOrderNo}
+                    console.log(myData)
+
+                    layer.confirm('此委托订单将回撤，操作无法撤销', {title: '警告', icon: 2}, function (index) {
+                        $.ajax({
+                            url: "/order",
+                            type: "PUT",
+                            // async: false,
+                            contentType: "application/json",
+                            //PUT请求传递参数必须使用JSON.stringify()
+                            data: JSON.stringify(myData),
+                            success: function (result) {
+                                console.log(result);
+                                //完成回撤操作后重载表格
+                                table.reload('orderList', {
+
+                                });
+                            }
+                        });
                         layer.close(index);
                     })
                     break;
@@ -133,7 +153,7 @@
 
         //监听排序事件
         //注：sort 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-        table.on('sort(test)', function(obj){
+        table.on('sort(orderList)', function (obj) {
             //当前排序的字段名
             // console.log(obj.field);
             //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
@@ -154,7 +174,7 @@
                     orderType: obj.type
                 }
             });
-            layer.msg('服务端排序 order by '+ obj.field + ' ' + obj.type);
+            layer.msg('服务端排序 order by ' + obj.field + ' ' + obj.type);
         });
     });
 
