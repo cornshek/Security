@@ -1,9 +1,6 @@
 package com.pd.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.KeySequence;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -48,6 +45,8 @@ public class User implements Serializable {
     /**提交状态*/
     private String submitState;
     /**管理员ID*/
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        /**开户表：Account.class*/
+    private String administratorId;
+    /**开户表：Account.class  ,当数据库中没有该表，插件自动忽略*/
+    @TableField(exist = false)
     private Account account;
 }
