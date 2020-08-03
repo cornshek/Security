@@ -106,25 +106,13 @@ public class UserController {
         return map;
     }
 
-    private static Person per = new Person();
     /**
      * 用户开户之，详细信息
      * produces = "application/json;charset=utf-8"
      */
     @RequestMapping(value = "/regPerson",method = RequestMethod.POST)
     public Person regPerson(Person person){
-        System.out.println("\n"+person);
-        per.setPhone(person.getPhone());
-        per.setBadCreditRecoed(person.getBadCreditRecoed());
-        System.out.println(per);
         return person;
     }
-
-
-
-
-
-
-
 
 }
