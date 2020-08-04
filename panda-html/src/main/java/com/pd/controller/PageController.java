@@ -1,5 +1,6 @@
 package com.pd.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,15 +32,6 @@ public class PageController {
 
     @RequestMapping("/openAccount.html")
     public void openAccount() {
-    }
-
-    @RequestMapping("/se")
-    @ResponseBody
-    public String sess(HttpServletRequest servletRequest){
-        HttpSession session = servletRequest.getSession();
-        Object user = session.getAttribute("user");
-        System.out.println(user);
-        return "";
     }
 
     @RequestMapping("/main.html")

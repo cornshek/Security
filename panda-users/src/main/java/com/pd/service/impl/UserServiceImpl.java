@@ -4,18 +4,16 @@ import com.aliyun.api.gateway.demo.util.HttpUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.pd.jsonconversion.DataMap;
 import com.pd.mapper.IAccountMapper;
+import com.pd.mapper.IPersonMapper;
 import com.pd.mapper.IUserMapper;
 import com.pd.pojo.Account;
+import com.pd.pojo.Person;
 import com.pd.pojo.User;
 import com.pd.result.MessageResult;
 import com.pd.service.IUserService;
-import com.pd.util.EncryptUtils;
-import com.pd.util.ImageBase64;
-import com.pd.util.SendNote;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import com.pd.util.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.dom4j.Element;
@@ -24,11 +22,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,6 +42,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private HttpSession httpSession;
+
+    @Autowired
+    private IPersonMapper personMapper;
 
     @Override
     public MessageResult<?> insertUser(User user, String note) throws Exception {
@@ -104,7 +101,6 @@ public class UserServiceImpl implements IUserService {
             message.setCode("20001");
             message.setMsg("没钱了！");
         }
-        System.out.println(root + "\n" + msg + "\n" + smsid);
         return message;
     }
 
@@ -117,7 +113,6 @@ public class UserServiceImpl implements IUserService {
             objectMessageResult.setMsg("验证码失效！");
         } else {
             String sessionNote = rs.toString();
-            System.out.println("数据库中储存的验证码是：" + sessionNote);
             if (note.equals(sessionNote) && sessionNote != null) {
                 objectMessageResult.setCode("20000");
                 objectMessageResult.setMsg("登录成功");
@@ -149,8 +144,8 @@ public class UserServiceImpl implements IUserService {
                 .eq(User::getPassword, user.getPassword());
         User rs = userMapper.selectOne(userQueryWrapper);
         //创建session,存储用户
-        System.out.println(httpSession.getId());
         httpSession.setAttribute("user", rs);
+        redisTemplate.opsForValue().set("user",rs);
         return messageResult(rs);
     }
 
@@ -188,7 +183,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public String checkIdCard(String idcard, String name, String bankcard, String mobile) throws Exception {
+    public int checkIdCard(String idcard, String name, String bankcard, String mobile) throws Exception {
         String url = "https://bankcard4c.shumaidata.com/bankcard4c";
         String appCode = "c05c7f6e47264f63953ce00c71ccdc3c";
         Map<String, String> params = new HashMap<>();
@@ -196,12 +191,12 @@ public class UserServiceImpl implements IUserService {
         params.put("name", name);
         params.put("bankcard", bankcard);
         params.put("mobile", mobile);
-        String result = get(appCode, url, params);
+        int result = BankCard.get(appCode, url, params);
         return result;
     }
 
     @Override
-    public String checkIdCardImage(String cardImagePath,String humanFaceImagePath) throws Exception {
+    public String checkIdCardImage(String cardImagePath, String humanFaceImagePath) throws Exception {
         //对图片进行转码base64
         String cardImage = ImageBase64.ImageToBase64("H:\\身份证证件\\qq.jpg");
         String humanFaceImage = ImageBase64.ImageToBase64("H:\\身份证证件\\ww.jpg");
@@ -229,34 +224,85 @@ public class UserServiceImpl implements IUserService {
          * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
          */
         HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
-        System.out.println(response.toString());
         //获取response的body
-        System.out.println(EntityUtils.toString(response.getEntity()));
-        return response.toString();
-    }
-
-    public String get(String appCode, String url, Map<String, String> params) throws IOException {
-        url = url + buildRequestUrl(params);
-        OkHttpClient client = new OkHttpClient.Builder().build();
-        Request request = new Request.Builder().url(url).addHeader("Authorization", "APPCODE " + appCode).build();
-        Response response = client.newCall(request).execute();
-        System.out.println("返回状态码" + response.code() + ",message:" + response.message());
-        String result = response.body().string();
-        return result;
-    }
-
-    public String buildRequestUrl(Map<String, String> params) {
-        StringBuilder url = new StringBuilder("?");
-        Iterator<String> it = params.keySet().iterator();
-        while (it.hasNext()) {
-            String key = it.next();
-            url.append(key).append("=").append(params.get(key)).append("&");
-        }
-        return url.toString().substring(0, url.length() - 1);
+        String body = EntityUtils.toString(response.getEntity(),"UTF-8");
+        return body;
     }
 
     @Override
     public User verify(User User) throws Exception {
         return null;
+    }
+
+    @Override
+    public MessageResult<?> insertPerson(Person person) throws Exception {
+        MessageResult<?> messageResult = new MessageResult<>();
+        if (person.getIdCardA() != null && person.getIdCardB() != null) {
+            //当姓名没有输入时，进来，姓名填了就不进来
+            if (person.getRealName() == null) {
+                //如果身份证件上传后，调用接口进行识别
+                String json = checkIdCardImage(person.getIdCardA(), person.getIdCardB());
+                //将json数据进行解析
+                Map<String, String> jsonData = DataMap.getJsonData(json);
+                Set<String> strings = jsonData.keySet();
+                for (String key : strings) {
+                    String value = jsonData.get(key);
+                    if (("姓名").equals(key)) {
+                        person.setRealName(value);
+                    } else if (("公民身份号码").equals(key)) {
+                        person.setIdCardNo(value);
+                    } else if (("住址").equals(key)) {
+                        person.setAddress(value);
+                    }
+                }
+            }
+        }
+        Object ect = redisTemplate.opsForValue().get("per");
+        if (ect == null) {
+            redisTemplate.opsForValue().set("per", person, 30, TimeUnit.MINUTES);
+        } else {
+            Person per = (Person) ect;
+            Person p = (Person) CombineBeans.CopyBeanToBean(person, per);
+            redisTemplate.opsForValue().set("per", p, 30, TimeUnit.MINUTES);
+            Object acc = redisTemplate.opsForValue().get("acc");
+            //判断是否写入完整
+            if (acc != null) {
+                //添加前获取登录凭证，用户的id
+//                User user = (User) httpSession.getAttribute("user");
+                User user = (User)redisTemplate.opsForValue().get("user");
+                Account resAcc = (Account) acc;
+                per.setUserId(user.getUserId());
+                resAcc.setUserId(user.getUserId());
+                if (resAcc.getTradingAccount() != null) {
+                    int insert = personMapper.insert(per);
+                    int insert1 = accountMapper.insert(resAcc);
+                    if (insert == 1 && insert1 == 1) {
+                        messageResult.setMsg("新增成功");
+                        messageResult.setCode("20000");
+                        //添加成功，删除注册缓存数据
+                        redisTemplate.expire("per", 0, TimeUnit.SECONDS);
+                        redisTemplate.expire("acc", 0, TimeUnit.SECONDS);
+                    }
+                    messageResult.setMsg("用户中断开户");
+                    messageResult.setCode("20001");
+                }
+            } else {
+                messageResult.setMsg("用户正在添加");
+                messageResult.setCode("20001");
+                messageResult.setData(p);
+            }
+        }
+        return messageResult;
+    }
+
+    @Override
+    public Account insertAccount(Account account) throws Exception {
+        String randomNickname = PlaceNumber.getRandomNickname(10);
+        if (account.getCapitalAccountNumber() == null) {
+            account.setCapitalAccountNumber(randomNickname);
+        }
+        Account newValue = (Account) ReflectValue.getObjectValue(account, Account.class);
+        redisTemplate.opsForValue().set("acc", newValue, 30, TimeUnit.MINUTES);
+        return newValue;
     }
 }

@@ -2,6 +2,7 @@ package com.pd.service;
 
 import com.github.pagehelper.PageInfo;
 import com.pd.pojo.Account;
+import com.pd.pojo.Person;
 import com.pd.pojo.User;
 import com.pd.result.MessageResult;
 
@@ -97,14 +98,15 @@ public interface IUserService {
 
 
     /**
-     * 验证身份证信息核实
+     * 银行卡信息核实
      * @param idcard
      * @param name
      * @param bankcard
      * @param mobile
+     * @throws Exception
      * @return
      */
-    String checkIdCard(String idcard,String name,String bankcard,String mobile) throws Exception;
+    int checkIdCard(String idcard,String name,String bankcard,String mobile) throws Exception;
 
     /**
      * 身份证图片认证
@@ -115,4 +117,19 @@ public interface IUserService {
      */
     String checkIdCardImage(String cardImagePath,String humanFaceImagePath)throws Exception;
 
+    /**
+     * 添加用户
+     * @param person
+     * @return
+     * @throws Exception
+     */
+    MessageResult<?> insertPerson(Person person)throws Exception;
+
+    /**
+     * 添加账户信息，开户卡
+     * @param account
+     * @return
+     * @throws Exception
+     */
+    Account insertAccount(Account account)throws Exception;
 }

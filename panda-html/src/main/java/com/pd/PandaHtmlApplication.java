@@ -1,6 +1,7 @@
 package com.pd;
 
 import com.pd.interceptor.FeignInterceptor;
+import jdk.nashorn.internal.runtime.GlobalConstants;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;

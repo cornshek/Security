@@ -49,4 +49,5 @@ public class User implements Serializable {
     /**开户表：Account.class  ,当数据库中没有该表，插件自动忽略*/
     @TableField(exist = false)
     private Account account;
+
 }
