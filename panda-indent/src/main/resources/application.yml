@@ -1,1 +1,53 @@
+server:
+  port: 9099
 
+#eureka相关配置
+eureka:
+  instance:
+    hostname: 127.0.0.1
+    #修改eureka-client在注册中心页面显示的名字
+    #${spring.cloud.client.ipaddress} 获取服务的ip地址
+    instance-id: indentService-${spring.cloud.client.ipaddress}-${server.port}
+    #服务信息显示的真实的ip, 开发中一定要设置为true, 如果不设置, 其他电脑访问不到你的服务
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:11111/eureka/
+
+#Mybatisplus的配置
+mybatis-plus:
+  #实体类路径
+  type-aliases-package: com.pd.pojo
+  #Mapper.xml路径
+  mapper-locations: classpath*:mapper/*Mapper.xml
+
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@10.1.8.252:1521:orcl
+    username: scott
+    password: tiger
+    #指定使用哪个数据源
+#    type: org.apache.commons.dbcp2.BasicDataSource
+#        type: com.alibaba.druid.pool.DruidDataSource
+    #    druid:
+    #       initSize: 10
+    #       maxSize: 100
+    #       minSize: 10
+
+#thymeleaf设置
+  thymeleaf:
+    prefix: classpath:/templates/page/
+    cache: false
+
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+    #json对属性值为null 忽略
+    default-property-inclusion: NON_NULL
+  application:
+    name: panda-indent
+
+ribbon:
+  eureka:
+    enabled: true

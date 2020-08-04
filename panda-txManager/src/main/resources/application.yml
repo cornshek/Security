@@ -1,0 +1,45 @@
+server:
+  port: 8521
+
+#redis相关配置
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  application:
+    name: panda-txManager
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/tx-manager?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 12345677
+#eureka相关配置
+eureka:
+  instance:
+    hostname: 127.0.0.1
+    #设置是否将自己作为客户端注册到注册中心(缺省true)
+    #这里为不需要,查看@EnableEurekaServer注解的源码,会发现它间接用到了@EnableDiscoveryClient
+    instance-id: txManagerService-${spring.cloud.client.ipaddress}-${server.port}
+    #服务信息显示的真实的ip, 开发中一定要设置为true, 如果不设置, 其他电脑访问不到你的服务
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      #指定服务注册中心的地址
+      defaultZone: http://${eureka.instance.hostname}:11111/eureka/
+
+
+tx-lcn:
+  manager:
+    # 必须写0.0.0.0才能连接，原因暂时未知
+    host: 0.0.0.0 # tx-manager ip(client请求ip)
+    port: 8070  # client 请求端口
+    heart-time: 12000 # 心跳检测时间 单位：ms
+    dtx-time: 3000 # 事务执行总时间
+    admin-key: 123456 #TM后台登陆密码,默认密码是codingapi
+  logger:
+    enabled: true #开启日志,默认为false,开发阶段最好开启日志，并设置为debug等级，这样方便追踪排查问题
+    #日志记录表
+    driver-class-name: ${spring.datasource.driver-class-name}
+    jdbc-url: ${spring.datasource.url}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
