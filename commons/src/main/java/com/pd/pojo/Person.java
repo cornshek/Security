@@ -40,11 +40,9 @@ public class Person implements Serializable {
     /**签发机关*/
     private String issuingDepartment;
     /**证件地址*/
-    private String  address;
-    /**起始期限*/
-    private String startingPerion;
-    /**结束期限*/
-    private String closingPeriod;
+    private String address;
+    /**证件有效期*/
+    private String effectiveTime;
     /**联系地址*/
     private String contactAddress;
     /**邮编*/
@@ -59,7 +57,7 @@ public class Person implements Serializable {
     private String accountBeneficiary;
     /**实际控制人*/
     private String actualController;
-    /**不良诚信记录*/
+    /**营业部*/
     private String badCreditRecoed;
     /**纳税居民身份*/
     private String taxResidentStatus;
@@ -79,5 +77,7 @@ public class Person implements Serializable {
     private String userClass;
     /**联系电话*/
     private String phone;
+    /**名族*/
+    private String ethnic;
 
 }

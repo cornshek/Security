@@ -6,6 +6,8 @@ import com.pd.pojo.Person;
 import com.pd.pojo.User;
 import com.pd.result.MessageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.system.ApplicationHome;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,15 +25,13 @@ import java.util.UUID;
  * @author GTY
  */
 @RestController
+@RefreshScope
 public class UserController {
     @Autowired
     private HttpSession session;
 
     @Autowired
     private UserServiceClient userServiceClient;
-
-    @Autowired
-    private HttpServletRequest request;
 
     @PostMapping("/registerUserSetPhoneAndPwd")
     public MessageResult<?> registerUser(String phone, String note, String pwd) throws Exception {
@@ -77,12 +77,9 @@ public class UserController {
      * @throws IOException
      */
     @PostMapping("/fileupload")
-    public Map<String,Object> upload(@RequestParam("file") MultipartFile upload) throws IOException {
-        System.out.println("springmvc方式文件上传。。。");
+    public Map<String, Object> upload(@RequestParam("file") MultipartFile upload, HttpServletRequest request) throws IOException {
         //使用fileupload组件完成文件上传
-//        String path = request.getSession().getServletContext().getRealPath("/uploads/");
-//        System.out.println("获取项目发布的一个文件夹路径：" + path);
-        String path = "H:\\img";
+        String path = request.getSession().getServletContext().getRealPath("/uploads/");
         //判断，该路径是否存在
         File file = new File(path);
         if (!file.exists()) {
@@ -97,7 +94,7 @@ public class UserController {
         filename = uuid + "_" + filename;
         // 完成文件上传
         upload.transferTo(new File(path, filename));
-        System.out.println("文件保存的路径：" + path + filename);
+        String img = path + filename;
         Map<String, Object> map = new HashMap<>();
         map.put("code", 0);
         map.put("msg", "上传成功");
@@ -110,9 +107,46 @@ public class UserController {
      * 用户开户之，详细信息
      * produces = "application/json;charset=utf-8"
      */
-    @RequestMapping(value = "/regPerson",method = RequestMethod.POST)
-    public Person regPerson(Person person){
-        return person;
+    @RequestMapping(value = "/regPerson", method = RequestMethod.POST)
+    public MessageResult<?> regPerson(Person person) throws Exception {
+        //上传完成将信息储发送到第三方接口识别
+        MessageResult<?> messageResult = userServiceClient.insertPerson(person);
+        return messageResult;
     }
 
+    /**
+     * 用户开户之，详细信息
+     * produces = "application/json;charset=utf-8"
+     */
+    @RequestMapping(value = "/regAccount", method = RequestMethod.POST)
+    public Account regAccount(Account account) throws Exception {
+        //上传完成将信息储发送到第三方接口识别
+        Account acc = userServiceClient.insertAccount(account);
+        return acc;
+    }
+
+    /**
+     * 银行卡绑定验证
+     */
+    @RequestMapping(value = "/cardVerify",method = RequestMethod.POST)
+    public MessageResult<?> cardVerify(String idCardNo,String phone,String realName,String tradingAccount) throws Exception {
+        int rs = userServiceClient.regIdCard(idCardNo,realName,tradingAccount,phone);
+        MessageResult<?> mess = new MessageResult<>();
+        if (200 == rs){
+            Account account = new Account();
+            account.setTradingAccount(tradingAccount);
+            Account data = userServiceClient.insertAccount(account);
+            Person person = new Person();
+            person.setRealName(realName);
+            person.setPhone(phone);
+            person.setIdCardNo(idCardNo);
+            MessageResult<?> m = userServiceClient.insertPerson(person);
+            //添加数据
+            mess.setMsg("身份正确！");
+            mess.setData(data);
+        }else{
+            mess.setMsg("身份错误！");
+        }
+        return mess;
+    }
 }

@@ -22,7 +22,7 @@ public class Account implements Serializable {
     private int accountId;
     /**用户ID*/
     private int userId;
-    /**沪地址*/
+    /**沪类型*/
     private String accountAddress;
     /**开户状态*/
     private String isAccount;
@@ -40,4 +40,8 @@ public class Account implements Serializable {
     private String capitalAccountState;
     /**风险评估等级*/
     private String eal;
+    /**姓名*/
+    private String name;
+    /**卡类型*/
+    private String cardType;
 }

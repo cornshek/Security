@@ -1,5 +1,7 @@
 package com.pd.controller;
 
+import com.pd.pojo.Account;
+import com.pd.pojo.Person;
 import com.pd.pojo.User;
 import com.pd.result.MessageResult;
 import com.pd.service.IUserService;
@@ -24,21 +26,30 @@ public class RegisterController {
     }
 
     /**
-     * 校验身份证信息
+     * 校验银行卡信息
      * @return
      */
-    @RequestMapping(value = "/regIdCard",method = RequestMethod.POST)
-    public String regIdCard(String idcard,String name,String bankcard,String mobile) throws Exception {
-        String result = userService.checkIdCard(idcard, name, bankcard, mobile);
-//        String result = idcard+"\n"+name+"\n"+bankcard+"\n"+mobile;
+    @RequestMapping(value = "/regIdCard", method = RequestMethod.POST)
+    public int regIdCard(@RequestParam("idCardNo") String idCardNo, @RequestParam("realName") String realName, @RequestParam("tradingAccount") String tradingAccount, @RequestParam("phone") String phone) throws Exception{
+        int result = userService.checkIdCard(idCardNo, realName, tradingAccount, phone);
         return result;
     }
 
     @RequestMapping(value = "/regHumanFace",method = RequestMethod.POST)
     public String regHumanFace(String cardImagePath,String humanFaceImagePath) throws Exception {
-        System.out.println(cardImagePath+":"+humanFaceImagePath);
         String result = userService.checkIdCardImage(cardImagePath,humanFaceImagePath);
-//        String result = idcard+"\n"+name+"\n"+bankcard+"\n"+mobile;
         return result;
+    }
+
+    @RequestMapping(value = "/regPerson",method = RequestMethod.POST)
+    public MessageResult<?> insertPerson(@RequestBody Person person)throws Exception{
+        MessageResult<?> messageResult = userService.insertPerson(person);
+        return messageResult;
+    }
+
+    @RequestMapping(value = "/regAccount",method = RequestMethod.POST)
+    public Account insertAccount(@RequestBody Account account)throws Exception{
+        Account acc = userService.insertAccount(account);
+        return acc;
     }
 }
