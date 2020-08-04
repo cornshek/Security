@@ -77,6 +77,7 @@ public class TbCommissionOrderControllerTest {
         tbCommissionOrder.setStockCode("000000");
         tbCommissionOrder.setStockName("我是股票");
         tbCommissionOrder.setStocks("10");
+        tbCommissionOrder.setCapitalAccountNumber("测试资金账户");
 
         Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders

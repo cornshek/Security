@@ -4,13 +4,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.pd.pojo.TbAccount;
 import com.pd.pojo.TbCommissionOrder;
 import com.pd.pojo.TbTransaction;
+import com.pd.service.ITbAccountService;
 import com.pd.service.ITbCommissionOrderService;
 import com.pd.service.ITbTransactionService;
 import com.pd.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -21,6 +25,8 @@ public class TbCommissionOrderController {
     ITbCommissionOrderService tbCommissionOrderService;
     @Autowired
     ITbTransactionService tbTransactionService;
+    @Autowired
+    ITbAccountService tbAccountService;
 
     /**
      * 添加订单
@@ -73,6 +79,7 @@ public class TbCommissionOrderController {
 
     /**
      * 分页查询订单
+     * TODO 根据资金账号查询
      * GET
      *
      * 不显示已撤回的委托订单 commissionOrderState = "0"
@@ -81,13 +88,29 @@ public class TbCommissionOrderController {
      * @return
      */
     @RequestMapping(value = "order", method = GET, produces = "application/json")
-    public JsonResult<IPage<TbCommissionOrder>> listOrder(Integer pageNum, Integer pageSize, @RequestParam(required = false) String orderType, @RequestParam(required = false) String orderField) {
+    public JsonResult<IPage<TbCommissionOrder>> listOrder(HttpSession session, Integer pageNum, Integer pageSize, @RequestParam(required = false) String orderType, @RequestParam(required = false) String orderField) {
         JsonResult<IPage<TbCommissionOrder>> result = new JsonResult<>();
-        QueryWrapper<TbCommissionOrder> queryWrapper = new QueryWrapper<>();
+
+        QueryWrapper<TbCommissionOrder> tbCommissionOrderQueryWrapper = new QueryWrapper<>();
+        QueryWrapper<TbAccount> tbAccountQueryWrapper = new QueryWrapper<>();
         boolean orderTypeFlag = true;
 
-        //不显示已撤回的订单
-        queryWrapper.ne("COMMISSION_ORDER_STATE", "0");
+        long userId;
+        TbAccount tbAccount = new TbAccount();
+
+        /*
+         *TODO 通过session获取用户id
+         * 通过用户id查询用户资金账号
+         */
+//        userId = session.getAttribute("");
+//        tbAccountQueryWrapper.eq("USER_ID", userId);
+//        tbAccount = tbAccountService.getOne(tbAccountQueryWrapper);
+
+        tbCommissionOrderQueryWrapper
+                //不显示已撤回的订单
+                .ne("COMMISSION_ORDER_STATE", "0");
+                //只显示当前用户的订单
+//                .eq("CAPITAL_ACCOUNT_NUMBER", "测试资金账户");
 
         //根据前端传递的orderType orderField设置条件构造器
         //若前端没有传递orderType orderField 的值，则使用默认排序(default分支)
@@ -100,22 +123,22 @@ public class TbCommissionOrderController {
         }
         switch (orderField) {
             case "commissionOrderState":
-                queryWrapper.orderBy(true, orderTypeFlag, "COMMISSION_ORDER_STATE");
+                tbCommissionOrderQueryWrapper.orderBy(true, orderTypeFlag, "COMMISSION_ORDER_STATE");
                 break;
             case "orderDate":
-                queryWrapper.orderBy(true, orderTypeFlag, "ORDER_DATE");
+                tbCommissionOrderQueryWrapper.orderBy(true, orderTypeFlag, "ORDER_DATE");
                 break;
             case "stockCode":
-                queryWrapper.orderBy(true, orderTypeFlag, "STOCK_CODE");
+                tbCommissionOrderQueryWrapper.orderBy(true, orderTypeFlag, "STOCK_CODE");
                 break;
             case "orderPrice":
-                queryWrapper.orderBy(true, orderTypeFlag, "ORDER_PRICE");
+                tbCommissionOrderQueryWrapper.orderBy(true, orderTypeFlag, "ORDER_PRICE");
             default:
                 //默认根据 COMMISSION_ORDER_NO 升序
-                queryWrapper.orderBy(true, orderTypeFlag, "COMMISSION_ORDER_NO");
+                tbCommissionOrderQueryWrapper.orderBy(true, orderTypeFlag, "COMMISSION_ORDER_NO");
         }
 
-        IPage<TbCommissionOrder> page = tbCommissionOrderService.page(new Page<>(pageNum, pageSize), queryWrapper);
+        IPage<TbCommissionOrder> page = tbCommissionOrderService.page(new Page<>(pageNum, pageSize), tbCommissionOrderQueryWrapper);
 
         result.setData(page);
         result.setStateCode(JsonResult.success);

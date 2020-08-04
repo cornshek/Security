@@ -3,8 +3,10 @@ package com.pd.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.pd.pojo.TbAccount;
 import com.pd.pojo.TbCommissionOrder;
 import com.pd.pojo.TbTransaction;
+import com.pd.service.ITbAccountService;
 import com.pd.service.ITbCommissionOrderService;
 import com.pd.service.ITbTransactionService;
 import com.pd.util.JsonResult;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
@@ -21,6 +25,8 @@ public class TbTransactionController {
 
     @Autowired
     ITbTransactionService tbTransactionService;
+    @Autowired
+    ITbAccountService tbAccountService;
 
     /**
      * 添加成交记录
@@ -45,17 +51,31 @@ public class TbTransactionController {
 
     /**
      * 分页查询成交记录
+     * TODO 根据资金账号查询
      * GET
-     *
      *
      * @param pageNum
      * @return
      */
     @RequestMapping(value = "transaction", method = GET, produces = "application/json")
-    public JsonResult<IPage<TbTransaction>> listOrder(Integer pageNum, Integer pageSize, @RequestParam(required = false) String orderType, @RequestParam(required = false) String orderField) {
+    public JsonResult<IPage<TbTransaction>> listOrder(HttpSession session, Integer pageNum, Integer pageSize, @RequestParam(required = false) String orderType, @RequestParam(required = false) String orderField) {
         JsonResult<IPage<TbTransaction>> result = new JsonResult<>();
-        QueryWrapper<TbTransaction> queryWrapper = new QueryWrapper<>();
+
+        QueryWrapper<TbTransaction> tbTransactionQueryWrapper = new QueryWrapper<>();
+        QueryWrapper<TbAccount> tbAccountQueryWrapper = new QueryWrapper<>();
         boolean orderTypeFlag = true;
+
+        long userId;
+        TbAccount tbAccount = new TbAccount();
+
+        /*
+         *TODO 通过session获取用户id
+         * 通过用户id查询用户资金账号
+         */
+//        userId  = session.getAttribute("");
+//        tbAccountQueryWrapper.eq("USER_ID", userId);
+//        tbAccount = tbAccountService.getOne(tbAccountQueryWrapper);
+//        tbTransactionQueryWrapper.eq("CAPITAL_ACCOUNT_NUMBER", tbAccount.getCapitalAccountNumber());
 
         //根据前端传递的orderType orderField设置条件构造器
         //若前端没有传递orderType orderField 的值，则使用默认排序(default分支)
@@ -68,24 +88,24 @@ public class TbTransactionController {
         }
         switch (orderField) {
             case "stockPrice":
-                queryWrapper.orderBy(true, orderTypeFlag, "STOCK_PRICE");
+                tbTransactionQueryWrapper.orderBy(true, orderTypeFlag, "STOCK_PRICE");
                 break;
             case "transactionTime":
-                queryWrapper.orderBy(true, orderTypeFlag, "TRANSACTION_TIME");
+                tbTransactionQueryWrapper.orderBy(true, orderTypeFlag, "TRANSACTION_TIME");
                 break;
             case "stockCode":
-                queryWrapper.orderBy(true, orderTypeFlag, "STOCK_CODE");
+                tbTransactionQueryWrapper.orderBy(true, orderTypeFlag, "STOCK_CODE");
                 break;
             case "transactionAmount":
-                queryWrapper.orderBy(true, orderTypeFlag, "TRANSACTION_AMOUNT");
+                tbTransactionQueryWrapper.orderBy(true, orderTypeFlag, "TRANSACTION_AMOUNT");
             case "transactionFee":
-                queryWrapper.orderBy(true, orderTypeFlag, "TRANSACTION_FEE");
+                tbTransactionQueryWrapper.orderBy(true, orderTypeFlag, "TRANSACTION_FEE");
             default:
                 //默认根据 TRANSACTION_NO 升序
-                queryWrapper.orderBy(true, orderTypeFlag, "TRANSACTION_NO");
+                tbTransactionQueryWrapper.orderBy(true, orderTypeFlag, "TRANSACTION_NO");
         }
 
-        IPage<TbTransaction> page = tbTransactionService.page(new Page<>(pageNum, pageSize), queryWrapper);
+        IPage<TbTransaction> page = tbTransactionService.page(new Page<>(pageNum, pageSize), tbTransactionQueryWrapper);
 
         result.setData(page);
         result.setStateCode(JsonResult.success);

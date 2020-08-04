@@ -1,34 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>test</title>
+    <title>委托订单列表</title>
+
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <link rel="stylesheet" href="layui/css/layui.css">
     <script src="layui/layui.js"></script>
-</head>
-<body>
-<div class="layui-tab">
-    <ul class="layui-tab-title">
-        <li class="layui-this">委托订单</li>
-        <li>成交记录</li>
-        <li>切换卡3</li>
-        <li>切换卡4</li>
-        <li>切换卡5</li>
-    </ul>
 
-    <div class="layui-tab-content">
-        <div class="layui-tab-item layui-show">
-            <table id="orderList" lay-filter="orderList"></table>
-        </div>
-        <div class="layui-tab-item">
-            <table id="transactionList" lay-filter="transactionList"></table>
-        </div>
-        <div class="layui-tab-item">内容3</div>
-        <div class="layui-tab-item">内容4</div>
-        <div class="layui-tab-item">内容5</div>
-    </div>
-</div>
+</head>
+<div th:fragment="orderList">
 
 <!-- 在<script>中插入html代码，作为模板使用 -->
 <script type="text/html" id="toolbarDemo">
@@ -43,19 +24,16 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">回撤</a>
 </script>
 
+    <table id="orderList" lay-filter="orderList"></table>
+
 <script>
+
     //用layui.use的形式，启用需要的模块
     //function(){ 这是编辑代码的地方 }
-    layui.use(['table', 'layer', 'element'], function () {
+    layui.use(['table', 'layer'], function () {
         var table = layui.table;
 
-        /**
-         * 委托订单表格 orderList
-         *
-         * START
-         */
         //执行渲染
-
         table.render({
             //设定容器唯一id
             id: 'orderList',
@@ -131,6 +109,14 @@
                         "commissionOrderNo": data.commissionOrderNo
                     }
                     console.log(myData)
+                    console.log(data.commissionOrderState)
+                    if ("已成交" === data.commissionOrderState) {
+                        layer.open({
+                            type: 0,
+                            content: "该订单已成交，无法回撤"
+                        })
+                        break;
+                    }
 
                     layer.confirm('此委托订单将回撤，操作无法撤销', {title: '警告', icon: 2}, function (index) {
                         $.ajax({
@@ -147,7 +133,7 @@
                             }
                         });
                         layer.close(index);
-                    })
+                    });
                     break;
             }
         });
@@ -177,116 +163,8 @@
             });
             layer.msg('服务端排序 order by ' + obj.field + ' ' + obj.type);
         });
-
-        /**
-         * 委托订单表格 orderList
-         *
-         * EDD
-         */
-
-        /**
-         * 成交记录表格
-         *
-         * START
-         */
-
-        //表格渲染
-        table.render({
-            //设定容器唯一id
-            id: 'transactionList',
-            //指定原始表格元素选择器（推荐id选择器）
-            elem: '#transactionList',
-            //表头
-            cols: [
-                [
-                    {field: 'transactionNo', title: '流水号'},
-                    {field: 'stockCode', title: '股票代码', sort: true},
-                    {field: 'stockName', title: '股票名称'},
-                    {field: 'transactionTime', title: '成交时间', sort: true},
-                    {field: 'stockPrice', title: '成交价格', sort: true},
-                    {field: 'stocks', title: '成交数量'},
-                    {field: 'transactionAmount', title: '成交额', sort: true},
-                    {field: 'business', title: '业务名称'},
-                    {field: 'transactionFee', title: '交易手续费', sort: true, style: "cursor: pointer"},
-                    // {title: '操作', toolbar: '#barDemo'}
-                ]
-            ],
-            title: "成交记录",
-            //禁用前端自动排序
-            autoSort: false,
-            //开启分页功能
-            page: true,
-            //数据接口
-            url: '/transaction',
-            //对分页请求的参数重新设定名称
-            request: {
-                //页码的参数名称，默认：page
-                pageName: 'pageNum',
-                //每页数据量的参数名，默认：limit
-                limitName: 'pageSize'
-            },
-            response: {
-                //规定数据状态的字段名称，默认：code
-                // statusName: 'stateCode',
-                //规定成功的状态码，默认：0
-                statusCode: 200,
-                //规定状态信息的字段名称，默认：msg
-                // msgName: 'message',
-                //规定数据总数的字段名称，默认：count
-                // countName: 'data.total',
-                //规定数据列表的字段名称，默认：data
-                // dataName: 'data.records',
-            },
-            parseData(result) {
-                return {
-                    //解析接口状态
-                    "code": result.stateCode,
-                    //解析提示文本
-                    "msg": result.message,
-                    //解析数据长度
-                    "count": result.data.total,
-                    //解数据列表析
-                    "data": result.data.records
-                }
-            }
-        });
-
-        //监听排序事件
-        //注：sort 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-        table.on('sort(transactionList)', function (obj) {
-            //当前排序的字段名
-            // console.log(obj.field);
-            //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
-            // console.log(obj.type);
-            //当前排序的 th 对象
-            // console.log(this);
-
-            //尽管我们的 table 自带排序功能，但并没有请求服务端。
-            //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，从而实现服务端排序，如：
-            table.reload('transactionList', {
-                //记录初始排序，如果不设的话，将无法标记表头的排序状态。
-                initSort: obj,
-                //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
-                where: {
-                    //排序字段
-                    orderField: obj.field,
-                    //排序方式
-                    orderType: obj.type
-                }
-            });
-            layer.msg('服务端排序 order by ' + obj.field + ' ' + obj.type);
-        });
-
-
-        /**
-         * 成交记录表格
-         *
-         * END
-         */
-
     });
-
-
 </script>
-</body>
+
+</div>
 </html>
