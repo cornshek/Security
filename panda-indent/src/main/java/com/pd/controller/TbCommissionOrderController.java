@@ -61,7 +61,7 @@ public class TbCommissionOrderController {
             tbTransaction.setStocks(tbCommissionOrder.getStocks());
             tbTransaction.setTransactionAmount(Integer.toString(transactionAmount));
             tbTransaction.setBusiness(tbCommissionOrder.getBusiness());
-            tbTransaction.setTransactionFee("交易请求完成后返回");
+            tbTransaction.setTransactionFee(Double.toString(transactionAmount * 0.123));
             tbTransaction.setRate("交易请求完成后返回");
 
             if (tbTransactionService.save(tbTransaction)) {

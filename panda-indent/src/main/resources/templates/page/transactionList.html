@@ -9,6 +9,8 @@
     <script src="layui/layui.js"></script>
 
 </head>
+
+<!-- th:fragment 属性表示此标签包裹的部分作为模板片段，以供其他页面引用 -->
 <div th:fragment="transactionList">
 
     <table id="transactionList" lay-filter="transactionList"></table>
@@ -30,14 +32,15 @@
                 cols: [
                     [
                         {field: 'transactionNo', title: '流水号'},
-                        {field: 'stockCode', title: '股票代码', sort: true},
+                        {field: 'capitalAccountNumber', title: '资金账号', hide: true},
+                        {field: 'stockCode', title: '股票代码', sort: true, style: "cursor: pointer", event: "timeline"},
                         {field: 'stockName', title: '股票名称'},
                         {field: 'transactionTime', title: '成交时间', sort: true},
                         {field: 'stockPrice', title: '成交价格', sort: true},
                         {field: 'stocks', title: '成交数量'},
                         {field: 'transactionAmount', title: '成交额', sort: true},
                         {field: 'business', title: '业务名称'},
-                        {field: 'transactionFee', title: '交易手续费', sort: true, style: "cursor: pointer"},
+                        {field: 'transactionFee', title: '交易手续费', sort: true},
                         // {title: '操作', toolbar: '#barDemo'}
                     ]
                 ],
@@ -106,6 +109,26 @@
                 });
                 layer.msg('服务端排序 order by ' + obj.field + ' ' + obj.type);
             });
+
+            //监听列工具条事件
+            table.on('tool(transactionList)', function (obj) {
+                //当前行数据的数据
+                var data = obj.data;
+
+                if (obj.event === "timeline") {
+                    console.log(obj);
+
+                    layer.open({
+                        type: 2,
+                        content: "/transactionByStockCode?stockCode=" + data.stockCode + "&capitalAccountNumber=" + data.capitalAccountNumber,
+                        area: ['700px', '600px'],
+                        title: '股票代码: ' + data.stockCode
+                    })
+
+
+                }
+            });
+
         });
     </script>
 </div>

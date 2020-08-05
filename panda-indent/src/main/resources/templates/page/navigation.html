@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>test</title>
+    <title>navigation</title>
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <link rel="stylesheet" href="layui/css/layui.css">
     <script src="layui/layui.js"></script>
@@ -10,21 +10,24 @@
 <body>
 <div class="layui-tab">
     <ul class="layui-tab-title">
-        <li class="layui-this">委托订单</li>
-        <li>成交记录</li>
-        <li>切换卡3</li>
+        <li>委托订单</li>
+        <li class="layui-this">成交记录</li>
+        <li>时间线测试</li>
         <li>切换卡4</li>
         <li>切换卡5</li>
     </ul>
 
     <div class="layui-tab-content">
-        <div class="layui-tab-item layui-show">
+        <!-- th：replace 标签表示引用已存在的模板片段(th: fragment所包裹的片段)-->
+        <div class="layui-tab-item">
             <div th:replace="orderList :: orderList"></div>
         </div>
-        <div class="layui-tab-item">
+        <div class="layui-tab-item layui-show">
             <div th:replace="transactionList :: transactionList"></div>
         </div>
-        <div class="layui-tab-item">内容3</div>
+        <div class="layui-tab-item">
+            <div th:replace="transactionTimeline :: transactionTimeline"></div>
+        </div>
         <div class="layui-tab-item">内容4</div>
         <div class="layui-tab-item">内容5</div>
     </div>

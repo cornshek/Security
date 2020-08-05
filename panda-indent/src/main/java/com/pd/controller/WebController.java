@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class WebController {
 
-    @RequestMapping("/test")
-    public String test() {
+    @RequestMapping("/navigation")
+    public String navigation() {
         return "navigation";
     }
+
 }

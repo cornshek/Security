@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>成交记录时间线</title>
+
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="layui/layui.js"></script>
+
+</head>
+
+<!-- th:fragment 属性表示此标签包裹的部分作为模板片段，以供其他页面引用 -->
+<div th:fragment="transactionTimeline">
+
+    <ul class="layui-timeline">
+        <br>
+
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+            <div class="layui-timeline-content layui-text">
+                <h2 class="layui-timeline-title" th:text="'交易次数: ' + ${dataListSize} + '次'">交易次数</h2>
+                <h2 class="layui-timeline-title" th:text="'时间跨度: ' + ${timespan}">时间跨度</h2>
+                <h2 class="layui-timeline-title" th:text="'盈亏: ' + ${allTransactionAmount}">盈亏</h2>
+                <h2 class="layui-timeline-title" th:text="'手续费总额: ' + ${allTransactionFee}">手续费总额</h2>
+            </div>
+        </li>
+
+        <li class="layui-timeline-item" th:each="transaction:${dataList}">
+            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title" th:text="${transaction.transactionTime}">成交时间</h3>
+                <h4 class="layui-timeline-title" th:text="${transaction.business}">业务名称</h4>
+                <p th:text="'成交额: ' + ${transaction.transactionAmount}">成交额</p>
+                <p th:text="'成交价: ' + ${transaction.stockPrice}">成交价</p>
+                <p th:text="'成交数量: ' + ${transaction.stocks}">成交数量</p>
+                <p th:text="'股票交易手续费: ' + ${transaction.transactionFee}">股票交易手续费</p>
+                <br>
+            </div>
+        </li>
+
+
+    </ul>
+
+</div>
+
+</html>

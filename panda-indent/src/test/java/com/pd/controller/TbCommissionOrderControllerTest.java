@@ -72,9 +72,9 @@ public class TbCommissionOrderControllerTest {
     @Test
     public void testForPost() throws Exception {
         TbCommissionOrder tbCommissionOrder = new TbCommissionOrder();
-        tbCommissionOrder.setBusiness("测试");
-        tbCommissionOrder.setOrderPrice("20");
-        tbCommissionOrder.setStockCode("000000");
+        tbCommissionOrder.setBusiness("买入");
+        tbCommissionOrder.setOrderPrice("1002");
+        tbCommissionOrder.setStockCode("000040");
         tbCommissionOrder.setStockName("我是股票");
         tbCommissionOrder.setStocks("10");
         tbCommissionOrder.setCapitalAccountNumber("测试资金账户");
@@ -85,7 +85,7 @@ public class TbCommissionOrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(gson.toJson(tbCommissionOrder));
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 5; i++) {
             MvcResult result = mockMvc.perform(requestBuilder).andReturn();
             System.out.println(result.getResponse().getContentAsString() );
         }
